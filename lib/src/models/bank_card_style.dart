@@ -229,9 +229,9 @@ class BankCardStyle {
       chipWidget: chipWidget,
       cardNumberTextStyle: TextStyle(
         color: textColor ?? Colors.black,
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: FontWeight.bold,
-        letterSpacing: 2.0,
+        letterSpacing: 1.5,
         fontFamily: fontFamily,
       ),
       cardHolderNameTextStyle: TextStyle(
