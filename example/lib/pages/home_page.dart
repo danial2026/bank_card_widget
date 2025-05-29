@@ -66,7 +66,6 @@ class _HomePageState extends State<HomePage> {
           cardNumber: '3782 8224 6310 005',
           cardHolderName: 'CARDHOLDER NAME',
           expiryDate: '09/26',
-          cvv: '789',
           style: BankCardStyle.basic(
             textColor: Colors.white,
             cardColor: _isDarkMode ? Colors.grey.shade700 : Colors.grey.shade600,
@@ -76,7 +75,6 @@ class _HomePageState extends State<HomePage> {
           cardNumber: '4242 4242 4242 4242', // Visa example
           cardHolderName: 'VISA CARD HOLDER',
           expiryDate: '07/25',
-          cvv: '123',
           style: BankCardStyle.basic(
             textColor: Colors.white,
             cardColor: Colors.blue.shade900,

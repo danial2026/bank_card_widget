@@ -13,7 +13,7 @@ class BankCardWidget extends StatefulWidget {
   final String expiryDate;
 
   /// The card verification value (CVV) for security.
-  final String cvv;
+  final String? cvv;
 
   /// Customize the look and feel of the card using BankCardStyle.
   final BankCardStyle? style;
@@ -23,7 +23,7 @@ class BankCardWidget extends StatefulWidget {
     required this.cardNumber,
     required this.cardHolderName,
     required this.expiryDate,
-    required this.cvv,
+    this.cvv,
     this.style,
   });
 
@@ -50,213 +50,189 @@ class _BankCardWidgetState extends State<BankCardWidget> {
     // Minimum width needed to display the card comfortably.
     const double minSupportedWidth = 405.0;
 
-    if (screenWidth < minSupportedWidth) {
-      // Show a message if the screen is too narrow.
-      return Container(
-        alignment: Alignment.center,
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.warning_amber, color: Colors.red, size: 40),
-            SizedBox(height: 10),
-            Text(
-              'This screen size isn\'t ideal for displaying the bank card.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.redAccent,
-                fontSize: 16,
-              ),
-            ),
-          ],
+    // Calculate scaling factor for smaller screens
+    final double scaleFactor = screenWidth < minSupportedWidth
+        ? (screenWidth / minSupportedWidth).clamp(0.6, 1.0) // Limit minimum scale to 0.6
+        : 1.0;
+
+    // Build the actual bank card layout.
+    // Standard credit card dimensions are roughly 85.6mm x 53.98mm.
+    // We use an aspect ratio for correct proportions and a max width to keep it from getting too big.
+    const double maxCardWidth = 420.0; // Maximum width for the card.
+    final double maxCardHeight = maxCardWidth / (style.aspectRatio ?? 1.585); // Calculate height based on aspect ratio.
+
+    // Determine text and logo colors, falling back to sensible defaults if not specified.
+    final Color cardTextColor = style.textColor ?? Colors.white;
+    final Color cardLogoColor = style.logoColor ?? cardTextColor;
+
+    // Create scaled text styles
+    final scaledCardNumberStyle = style.cardNumberTextStyle?.copyWith(
+          fontSize: (style.cardNumberTextStyle?.fontSize ?? 20) * scaleFactor,
+          letterSpacing: (style.cardNumberTextStyle?.letterSpacing ?? 2.0) * scaleFactor,
+        ) ??
+        TextStyle(
+          color: cardTextColor,
+          fontSize: 20 * scaleFactor,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 2.0 * scaleFactor,
+        );
+
+    final scaledCVVStyle = style.cvvTextStyle?.copyWith(
+          fontSize: (style.cvvTextStyle?.fontSize ?? 12) * scaleFactor,
+          letterSpacing: (style.cvvTextStyle?.letterSpacing ?? 2.0) * scaleFactor,
+        ) ??
+        TextStyle(
+          color: cardTextColor,
+          fontSize: 12 * scaleFactor,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 2.0 * scaleFactor,
+        );
+
+    final scaledLabelStyle = style.labelTextStyle?.copyWith(
+          fontSize: (style.labelTextStyle?.fontSize ?? 10) * scaleFactor,
+        ) ??
+        TextStyle(
+          color: cardTextColor.withAlpha(179),
+          fontSize: 10 * scaleFactor,
+        );
+
+    final scaledCardHolderStyle = style.cardHolderNameTextStyle?.copyWith(
+          fontSize: (style.cardHolderNameTextStyle?.fontSize ?? 14) * scaleFactor,
+        ) ??
+        TextStyle(
+          color: cardTextColor,
+          fontSize: 14 * scaleFactor,
+          fontWeight: FontWeight.bold,
+        );
+
+    final scaledExpiryStyle = style.expiryDateTextStyle?.copyWith(
+          fontSize: (style.expiryDateTextStyle?.fontSize ?? 14) * scaleFactor,
+        ) ??
+        TextStyle(
+          color: cardTextColor,
+          fontSize: 14 * scaleFactor,
+          fontWeight: FontWeight.bold,
+        );
+
+    return Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: maxCardWidth,
+          maxHeight: maxCardHeight,
         ),
-      );
-    } else {
-      // Build the actual bank card layout.
-      // Standard credit card dimensions are roughly 85.6mm x 53.98mm.
-      // We use an aspect ratio for correct proportions and a max width to keep it from getting too big.
-      const double maxCardWidth = 420.0; // Maximum width for the card.
-      final double maxCardHeight = maxCardWidth / (style.aspectRatio ?? 1.585); // Calculate height based on aspect ratio.
-
-      // Determine text and logo colors, falling back to sensible defaults if not specified.
-      final Color cardTextColor = style.textColor ?? Colors.white;
-      final Color cardLogoColor = style.logoColor ?? cardTextColor;
-
-      return Center(
-        // Center the card horizontally.
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: maxCardWidth,
-            maxHeight: maxCardHeight,
-          ),
-          child: AspectRatio(
-            aspectRatio: style.aspectRatio ?? 1.585, // Maintain the correct card shape.
-            child: Container(
-              decoration: BoxDecoration(
-                color: style.cardColor, // Apply background color
-                gradient: style.cardGradient, // Apply gradient background (overrides color if present)
-                borderRadius: BorderRadius.circular(style.cornerRadius ?? 15.0), // Rounded corners.
-                boxShadow: style.shadow != null // Add shadow if defined.
-                    ? [style.shadow!]
-                    : const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 10,
-                          offset: Offset(0, 5),
-                        ),
-                      ],
-              ),
-              child: Padding(
-                padding: style.padding ?? const EdgeInsets.all(20.0), // Apply inner padding.
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Top row: Chip, Contactless Icon, and Card Type Logo (or custom builder output).
-                    (style.cardLogoAndNameBuilder != null) // Check if a custom builder is provided.
-                        ? style.cardLogoAndNameBuilder!(context, widget.cardNumber, widget.cardHolderName)
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // Display contactless icon and card type logo using the default logic.
-                              Row(
-                                children: [
-                                  // Contactless Icon (a simple placeholder icon).
-                                  Icon(Icons.wifi, size: style.logoSize ?? 30, color: cardLogoColor),
-                                  SizedBox(width: (style.elementSpacing ?? 4.0) * 2), // Spacing
-                                  // Card Type Logo (determined by card number prefix).
-                                  _buildCardLogo(style.logoSize ?? 40.0, cardLogoColor),
-                                ],
-                              ),
-                            ],
-                          ),
-                    SizedBox(height: style.sectionSpacing ?? 16.0), // Spacing between top and middle sections.
-                    // Middle row: Chip and Card Number.
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center, // Vertically align items in this row.
-                      children: [
-                        // Display the chip widget (custom or default).
-                        if (style.chipWidget != null) // Use custom chip if provided.
-                          style.chipWidget!
-                        else // Otherwise, draw the default chip.
-                          CustomPaint(
-                            size: Size(style.chipWidth ?? 52, style.chipHeight ?? 46), // Set the size of the custom paint area.
-                            painter: ChipPainter(
-                              chipColor: style.chipColor ?? Colors.amber.shade700, // Chip background color.
-                              lineColor: Color.lerp(
-                                    style.chipColor ?? Colors.amber.shade700,
-                                    Colors.black,
-                                    0.2,
-                                  ) ??
-                                  Colors.amber.shade900, // Color for chip lines.
-                            ),
-                          ),
-                        SizedBox(width: style.sectionSpacing ?? 16.0), // Spacing between chip and card number.
-                        // Display the card number.
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Display the first four digits above the main number.
-                              Text(
-                                widget.cardNumber.substring(0, 4), // Get the first four digits.
-                                style: style.cardNumberTextStyle?.copyWith(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.normal,
-                                      letterSpacing: 1.0,
-                                    ) ??
-                                    TextStyle(
-                                      color: cardTextColor,
-                                      fontSize: 12,
-                                    ),
-                              ),
-                              SizedBox(height: (style.elementSpacing ?? 4.0) / 2), // Small spacing.
-                              // Display the full card number, formatted.
-                              Text(
-                                widget.cardNumber
-                                    .replaceAllMapped(RegExp(r'(.{4})'), (match) => '${match.group(0)} ') // Add spaces every 4 digits.
-                                    .trim(), // Remove trailing space.
-                                style: style.cardNumberTextStyle ?? // Use custom style or a default.
-                                    TextStyle(
-                                      color: cardTextColor,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 2.0,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: style.sectionSpacing ?? 16.0), // Spacing between middle and bottom sections.
-                    // Bottom row: Card Holder Name and Expiry Date (or part of custom builder).
-                    // Note: If a custom builder was used in the top row, this row might not be needed,
-                    // depending on how the custom builder handles the layout.
-                    // The condition to use the custom builder is in the top-level Column's children list.
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Display the card holder name.
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+        child: AspectRatio(
+          aspectRatio: style.aspectRatio ?? 1.585,
+          child: Container(
+            decoration: BoxDecoration(
+              color: style.cardColor,
+              gradient: style.cardGradient,
+              borderRadius: BorderRadius.circular(style.cornerRadius ?? 15.0),
+              boxShadow: style.shadow != null
+                  ? [style.shadow!]
+                  : const [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
+            ),
+            child: Padding(
+              padding: (style.padding ?? const EdgeInsets.all(20.0)) * scaleFactor,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  (style.cardLogoAndNameBuilder != null)
+                      ? style.cardLogoAndNameBuilder!(context, widget.cardNumber, widget.cardHolderName)
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              'Card Holder',
-                              style: style.labelTextStyle ?? // Use custom style or a default.
-                                  TextStyle(
-                                    color: cardTextColor.withOpacity(0.7), // Slightly transparent label.
-                                    fontSize: 10,
-                                  ),
-                            ),
-                            SizedBox(height: style.elementSpacing ?? 4.0), // Spacing.
-                            Text(
-                              widget.cardHolderName,
-                              style: style.cardHolderNameTextStyle ?? // Use custom style or a default.
-                                  TextStyle(
-                                    color: cardTextColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                            Row(
+                              children: [
+                                Icon(Icons.wifi, size: (style.logoSize ?? 30) * scaleFactor, color: cardLogoColor),
+                                SizedBox(width: (style.elementSpacing ?? 4.0) * 2 * scaleFactor),
+                                _buildCardLogo((style.logoSize ?? 40.0) * scaleFactor, cardLogoColor),
+                              ],
                             ),
                           ],
                         ),
-                        // Display the expiry date.
-                        Column(
+                  SizedBox(height: (style.sectionSpacing ?? 16.0) * scaleFactor),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      if (style.chipWidget != null)
+                        style.chipWidget!
+                      else
+                        CustomPaint(
+                          size: Size(
+                            (style.chipWidth ?? 52) * scaleFactor,
+                            (style.chipHeight ?? 46) * scaleFactor,
+                          ),
+                          painter: ChipPainter(
+                            chipColor: style.chipColor ?? Colors.amber.shade700,
+                            lineColor: Color.lerp(
+                                  style.chipColor ?? Colors.amber.shade700,
+                                  Colors.black,
+                                  0.2,
+                                ) ??
+                                Colors.amber.shade900,
+                          ),
+                        ),
+                      SizedBox(width: (style.sectionSpacing ?? 16.0) * scaleFactor),
+                      Expanded(
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            if (widget.cvv != null)
+                              Text(
+                                widget.cvv ?? '',
+                                style: scaledCVVStyle.copyWith(
+                                  fontSize: (scaledCVVStyle.fontSize ?? 12) * scaleFactor,
+                                  fontWeight: FontWeight.normal,
+                                  letterSpacing: (scaledCardNumberStyle.letterSpacing ?? 1.0) * scaleFactor,
+                                ),
+                              ),
+                            SizedBox(height: (style.elementSpacing ?? 4.0) * scaleFactor / 2),
                             Text(
-                              'VALID THRU',
-                              style: style.labelTextStyle ?? // Use custom style or a default.
-                                  TextStyle(
-                                    color: cardTextColor.withOpacity(0.7), // Slightly transparent label.
-                                    fontSize: 8,
-                                  ),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(height: style.elementSpacing ?? 4.0), // Spacing.
-                            Text(
-                              widget.expiryDate,
-                              style: style.expiryDateTextStyle ?? // Use custom style or a default.
-                                  TextStyle(
-                                    color: cardTextColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              widget.cardNumber.replaceAllMapped(RegExp(r'(.{4})'), (match) => '${match.group(0)} ').trim(),
+                              style: scaledCardNumberStyle,
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: (style.sectionSpacing ?? 16.0) * scaleFactor),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Card Holder', style: scaledLabelStyle),
+                          SizedBox(height: (style.elementSpacing ?? 4.0) * scaleFactor),
+                          Text(widget.cardHolderName, style: scaledCardHolderStyle),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('VALID THRU', style: scaledLabelStyle.copyWith(fontSize: 8 * scaleFactor)),
+                          SizedBox(height: (style.elementSpacing ?? 4.0) * scaleFactor),
+                          Text(widget.expiryDate, style: scaledExpiryStyle),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
         ),
-      );
-    }
+      ),
+    );
   }
 
   // Helper function to display a placeholder logo based on the card number prefix.

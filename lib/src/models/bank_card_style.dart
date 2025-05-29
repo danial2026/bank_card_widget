@@ -35,6 +35,9 @@ class BankCardStyle {
   /// Style for the card holder's name.
   final TextStyle? cardHolderNameTextStyle;
 
+  /// Style for the card's cvv
+  final TextStyle? cvvTextStyle;
+
   /// Style for the card's expiry date.
   final TextStyle? expiryDateTextStyle;
 
@@ -107,6 +110,7 @@ class BankCardStyle {
     // Font and Text Styles!
     this.cardNumberTextStyle,
     this.cardHolderNameTextStyle,
+    this.cvvTextStyle,
     this.expiryDateTextStyle,
     this.labelTextStyle,
     this.fontFamily,
@@ -147,6 +151,7 @@ class BankCardStyle {
     // Text Styles
     TextStyle? cardNumberTextStyle,
     TextStyle? cardHolderNameTextStyle,
+    TextStyle? cvvTextStyle,
     TextStyle? expiryDateTextStyle,
     TextStyle? labelTextStyle,
     String? fontFamily,
@@ -185,6 +190,7 @@ class BankCardStyle {
       // Text Styles
       cardNumberTextStyle: cardNumberTextStyle ?? this.cardNumberTextStyle,
       cardHolderNameTextStyle: cardHolderNameTextStyle ?? this.cardHolderNameTextStyle,
+      cvvTextStyle: cvvTextStyle ?? this.cvvTextStyle,
       expiryDateTextStyle: expiryDateTextStyle ?? this.expiryDateTextStyle,
       labelTextStyle: labelTextStyle ?? this.labelTextStyle,
       fontFamily: fontFamily ?? this.fontFamily,
@@ -234,6 +240,12 @@ class BankCardStyle {
         letterSpacing: 1.5,
         fontFamily: fontFamily,
       ),
+      cvvTextStyle: TextStyle(
+        color: textColor ?? Colors.black,
+        fontSize: 10,
+        fontWeight: FontWeight.bold,
+        fontFamily: fontFamily,
+      ),
       cardHolderNameTextStyle: TextStyle(
         color: textColor ?? Colors.black,
         fontSize: 14,
@@ -247,7 +259,7 @@ class BankCardStyle {
         fontFamily: fontFamily,
       ),
       labelTextStyle: TextStyle(
-        color: (textColor ?? Colors.black).withOpacity(0.7),
+        color: (textColor ?? Colors.black).withAlpha(179),
         fontSize: 10,
         fontFamily: fontFamily,
       ),
