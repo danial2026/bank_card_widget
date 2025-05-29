@@ -180,11 +180,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildBody() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Package info card
           PackageInfoCard(isDarkMode: _isDarkMode),
@@ -197,11 +197,9 @@ class _HomePageState extends State<HomePage> {
           ),
           const SizedBox(height: 20),
           // Bank Card Examples Grid
-          Expanded(
-            // Use Expanded to allow GridView to take available space
-            child: _buildBankCardExamplesSection(),
-          ),
-          const SizedBox(height: 24),
+          _buildBankCardExamplesSection(),
+
+          const SizedBox(height: 32),
         ],
       ),
     );
@@ -211,9 +209,10 @@ class _HomePageState extends State<HomePage> {
     // Calculate the number of columns based on screen width
     final screenWidth = MediaQuery.of(context).size.width;
     // Define a reasonable maximum width for each grid item
-    const double maxItemWidth = 420.0;
+    const double maxItemWidth = 420.0 - 24;
     // Calculate the number of columns, ensuring at least one
-    final int crossAxisCount = (screenWidth / maxItemWidth).floor();
+    int crossAxisCount = (screenWidth / maxItemWidth).floor();
+    crossAxisCount = ((screenWidth - 24 - (crossAxisCount * 12)) / maxItemWidth).floor();
     final int adjustedCrossAxisCount = crossAxisCount < 1 ? 1 : crossAxisCount;
 
     return GridView.builder(
@@ -225,7 +224,9 @@ class _HomePageState extends State<HomePage> {
         crossAxisSpacing: 16.0,
         mainAxisSpacing: 16.0,
       ),
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: _bankCardExamples.length,
+      shrinkWrap: true,
       itemBuilder: (context, index) {
         return _bankCardExamples[index];
       },
