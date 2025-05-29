@@ -2,7 +2,6 @@ import 'package:bank_card_widget_example/widgets/package_info_card.dart';
 import 'package:flutter/material.dart';
 import 'package:bank_card_widget/bank_card_widget.dart';
 
-/// Main home page displaying all the time range sheet examples
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 

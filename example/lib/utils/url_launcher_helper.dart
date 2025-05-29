@@ -13,8 +13,8 @@ class UrlLauncherHelper {
   }
 
   /// Package-specific URLs
-  static const String pubDevUrl = 'https://pub.dev/packages/time_range_sheet_widget';
-  static const String githubUrl = 'https://github.com/danial2026/time_range_sheet_widget';
+  static const String pubDevUrl = 'https://pub.dev/packages/bank_card_widget';
+  static const String githubUrl = 'https://github.com/danial2026/bank_card_widget';
 
   /// Launch pub.dev page
   static Future<void> launchPubDev() => launchUrlExternal(pubDevUrl);

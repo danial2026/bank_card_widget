@@ -98,7 +98,7 @@ class PackageInfoCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Time Range Sheet Widget',
+                'Bank Card Widget',
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
@@ -123,7 +123,7 @@ class PackageInfoCard extends StatelessWidget {
 
   Widget _buildDescription() {
     return Text(
-      'A highly customizable, reusable time range picker bottom sheet widget for Flutter with extensive styling options and validation support.',
+      'A customizable and reusable bank card widget for Flutter with various styling options.',
       style: TextStyle(
         fontSize: 16,
         color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
