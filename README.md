@@ -4,6 +4,8 @@ A customizable and reusable bank card widget for Flutter with various styling op
 
 [![pub package](https://img.shields.io/pub/v/bank_card_widget.svg)](https://pub.dev/packages/bank_card_widget)
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-View%20Online-blue)](https://bank-card-widget.pages.dev/)
+
 ## Screenshots
 
 ![Demo Cards](https://raw.githubusercontent.com/danial2026/bank_card_widget/main/assets/demo.png)
