@@ -1,6 +1,6 @@
 name: bank_card_widget
 description: A customizable and reusable bank card widget for Flutter with various styling options.
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/danial2026/bank_card_widget
 
 environment:

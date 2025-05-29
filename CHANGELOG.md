@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.3
+
+- Added CVV text style customization support
+- Fixed deprecated withOpacity usage by replacing with withAlpha
+- Improved text scaling for smaller screens
+
 ## 0.0.2
 
 - Update README
